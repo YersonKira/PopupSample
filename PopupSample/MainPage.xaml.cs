@@ -33,6 +33,7 @@ namespace PopupSample
             popup.Show(new MyUserControl(), new Point(500, 500));
             popup.Siguiente += (s, a) => {
                 res.Text = a.Result;
+
             };
             popup.Anterior += (s, a) => {
                 res.Text = a.Result;
@@ -51,24 +52,46 @@ namespace PopupSample
     {
         public event EventHandler<MyEventArgs> Siguiente;
         public event EventHandler<MyEventArgs> Anterior;
+        private MyUserControl uc;
         public PopupHelper()
         {
             
         }
         public void Show(MyUserControl usercontrol, Point location) 
         {
-            usercontrol.Siguiente += (s, a) => {
-                Siguiente(this, new MyEventArgs(a.Result));
-            };
-            usercontrol.Anterior += (s, a) => {
-                Anterior(this, new MyEventArgs(a.Result));
-            };
+            usercontrol.Siguiente += usercontrol_Siguiente;
+            usercontrol.Anterior += usercontrol_Anterior;
+            //usercontrol.Siguiente += (s, a) => {
+            //    Siguiente(this, new MyEventArgs(a.Result));
+            //};
+            //usercontrol.Anterior += (s, a) => {
+            //    Anterior(this, new MyEventArgs(a.Result));
+            //};
             Popup popup = new Popup();
             popup.Child = usercontrol;
             popup.HorizontalOffset = location.X;
             popup.VerticalOffset = location.Y;
             popup.IsLightDismissEnabled = true;
             popup.IsOpen = true;
+            this.uc = usercontrol;
+        }
+
+        void usercontrol_Anterior(object sender, MyEventArgs e)
+        {
+            if (Anterior != null)
+            {
+                Anterior(this, new MyEventArgs(e.Result));
+                this.uc.Anterior -= usercontrol_Anterior;
+            }
+        }
+
+        void usercontrol_Siguiente(object sender, MyEventArgs e)
+        {
+            if (Siguiente != null)
+            {
+                Siguiente(this, new MyEventArgs(e.Result));
+                this.uc.Siguiente -= usercontrol_Siguiente;
+            }
         }
     }
 }

@@ -28,12 +28,18 @@ namespace PopupSample
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Siguiente(this, new MyEventArgs("click botton siguiente"));
+            if (Siguiente != null)
+            {
+                Siguiente(this, new MyEventArgs("click botton siguiente"));
+            }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            Anterior(this, new MyEventArgs("click botton anterior"));
+            if (Anterior != null)
+            {
+                Anterior(this, new MyEventArgs("click botton anterior"));
+            }
         }
     }
 }
